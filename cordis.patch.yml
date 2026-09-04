@@ -1,0 +1,3 @@
+- insert:
+    - id: relay-skill-creator-host
+      name: relay-dsh-plugin-skill-creator
