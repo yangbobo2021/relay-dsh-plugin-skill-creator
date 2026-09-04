@@ -16,10 +16,20 @@ assert.equal(manifest.main, './lib/index.js')
 assert.equal(manifest.dsh.bundle.patch, './cordis.patch.yml')
 for (const hook of ['preinstall', 'install', 'postinstall']) assert.equal(manifest.scripts[hook], undefined)
 
-const packed = JSON.parse(execFileSync('npm', ['pack', '--ignore-scripts', '--dry-run', '--json'], {
+const packOutput = execFileSync('npm', ['pack', '--ignore-scripts', '--dry-run', '--json'], {
   cwd: root,
   encoding: 'utf8',
-}))[0]
+  env: {
+    ...process.env,
+    FORCE_COLOR: '0',
+    NO_COLOR: '1',
+    npm_config_ignore_scripts: 'true',
+    npm_config_loglevel: 'silent',
+  },
+})
+const jsonPayload = /(?:^|\n)(\[\s*\{[\s\S]*\}\s*\])\s*$/u.exec(packOutput)?.[1]
+assert.ok(jsonPayload, `npm pack did not return a JSON payload:\n${packOutput}`)
+const packed = JSON.parse(jsonPayload)[0]
 const paths = new Set(packed.files.map(file => file.path))
 const required = [
   'lib/index.js',
