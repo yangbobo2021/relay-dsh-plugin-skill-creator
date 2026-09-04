@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 - 2026-09-04
+
+- Publish subsequent releases through the verified GitHub Actions OIDC trusted publisher.
+- Document npm installation and the tokenless release path.
+
 ## 0.1.0 - 2026-09-04
 
 - Register the bundled `conversation-to-skill` DSH Skill.

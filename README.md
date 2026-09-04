@@ -6,11 +6,13 @@ The generated bundle can include `SKILL.md`, `references/`, `scripts/`, and `ass
 
 ## Install in DSH
 
-Add the package to the DSH host and apply its bundled Cordis patch. During repository development, install from this Git repository or a packed tarball. The package is prepared for public npm publishing but V1 source releases do not imply that an npm version has already been published.
+Add the public npm package to the DSH host and apply its bundled Cordis patch:
 
 ```bash
-npm install github:yangbobo2021/relay-dsh-plugin-skill-creator
+npm install relay-dsh-plugin-skill-creator
 ```
+
+For repository development, installation from GitHub remains supported with `npm install github:yangbobo2021/relay-dsh-plugin-skill-creator`.
 
 The included `cordis.patch.yml` inserts `relay-dsh-plugin-skill-creator` into the host configuration.
 

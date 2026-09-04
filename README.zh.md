@@ -6,11 +6,13 @@
 
 ## 安装到 DSH
 
-在 DSH Host 中安装本仓库，并应用包内的 `cordis.patch.yml`：
+在 DSH Host 中安装公开 npm 包，并应用包内的 `cordis.patch.yml`：
 
 ```bash
-npm install github:yangbobo2021/relay-dsh-plugin-skill-creator
+npm install relay-dsh-plugin-skill-creator
 ```
+
+开发版本仍可通过 `npm install github:yangbobo2021/relay-dsh-plugin-skill-creator` 从 GitHub 安装。
 
 ## 使用方式
 

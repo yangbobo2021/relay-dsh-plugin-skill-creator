@@ -1,6 +1,6 @@
 {
   "name": "relay-dsh-plugin-skill-creator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A DSH plugin that turns a completed conversation into a reusable, validated DSH Skill bundle.",
   "keywords": [
     "dsh-plugin",

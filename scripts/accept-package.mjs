@@ -9,7 +9,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 
 assert.equal(manifest.name, 'relay-dsh-plugin-skill-creator')
-assert.equal(manifest.version, '0.1.0')
+assert.match(manifest.version, /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/u)
 assert.equal(manifest.private, undefined)
 assert.equal(manifest.publishConfig.access, 'public')
 assert.equal(manifest.main, './lib/index.js')

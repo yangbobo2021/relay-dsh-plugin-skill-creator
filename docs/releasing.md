@@ -21,7 +21,7 @@ After that one-time binding, tag releases require no browser authorization and n
 
 ## First-release bootstrap
 
-npm requires a package to exist before a Trusted Publisher can be attached. Therefore `0.1.0` must first be published with an interactive 2FA-authenticated npm session or a narrowly scoped bootstrap token. Immediately afterward, attach the OIDC publisher and remove any bootstrap token. All later releases use the workflow only.
+npm requires a package to exist before a Trusted Publisher can be attached. Version `0.1.0` was therefore bootstrapped with an interactive 2FA-authenticated npm session. The OIDC publisher is now attached; all later releases use the workflow only and require no long-lived token.
 
 The equivalent npm CLI command, with npm 11.15 or newer and an interactive 2FA-authenticated session, is:
 
