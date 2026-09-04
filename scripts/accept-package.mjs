@@ -40,6 +40,7 @@ const required = [
   'docs/security.md',
   'docs/acceptance.md',
   'docs/dsh-compatibility.md',
+  'docs/releasing.md',
   'skills/conversation-to-skill/SKILL.md',
   'skills/conversation-to-skill/references/extraction-guide.md',
   'skills/conversation-to-skill/references/resource-routing.md',

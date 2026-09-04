@@ -30,3 +30,7 @@ npm run verify
 验收包括真实 DSH `SkillRegistry` 生命周期、独立验证器的正反例、指令安全顺序，以及 npm 打包内容检查。
 
 详细约定见 [SPEC.md](SPEC.md)、[架构](docs/architecture.md)、[安全模型](docs/security.md)、[验收矩阵](docs/acceptance.md) 和 [DSH 兼容基线](docs/dsh-compatibility.md)。
+
+## 发布
+
+版本标签会通过 GitHub Actions 和 npm Trusted Publishing（OIDC）自动发布，不保存长期 npm Token。首次创建 npm 包需要一次 bootstrap，之后绑定 `release.yml` 即可完全通过 CI 发布。详见[发布指南](docs/releasing.md)。

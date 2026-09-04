@@ -31,6 +31,10 @@ The tests use the real DSH `SkillRegistry`, exercise the standalone validator, a
 
 See [SPEC.md](SPEC.md), [architecture](docs/architecture.md), [security model](docs/security.md), [acceptance matrix](docs/acceptance.md), and [DSH compatibility](docs/dsh-compatibility.md).
 
+## Releases
+
+Version tags publish through GitHub Actions using npm Trusted Publishing (OIDC), with no long-lived npm token. See [the release guide](docs/releasing.md) for the one-time first-package bootstrap and publisher binding.
+
 ## License
 
 MIT

@@ -7,3 +7,4 @@
 - Add proposal-before-write, privacy, safe-update, validation, and honest-reporting requirements.
 - Add a standalone structural and privacy validator.
 - Add real DSH registry, validator, instruction-contract, and package acceptance tests.
+- Add tag-bound npm Trusted Publishing through GitHub Actions OIDC.
