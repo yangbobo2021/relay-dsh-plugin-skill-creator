@@ -43,10 +43,12 @@ const required = [
   'docs/releasing.md',
   'skills/conversation-to-skill/SKILL.md',
   'skills/conversation-to-skill/references/extraction-guide.md',
+  'skills/conversation-to-skill/references/acceptance-and-efficiency.md',
   'skills/conversation-to-skill/references/resource-routing.md',
   'skills/conversation-to-skill/references/dsh-skill-format.md',
   'skills/conversation-to-skill/references/security-and-privacy.md',
   'skills/conversation-to-skill/scripts/validate-skill.mjs',
+  'skills/conversation-to-skill/scripts/check-privacy-canary.mjs',
   'skills/conversation-to-skill/assets/skill-skeleton/SKILL.md.tmpl',
 ]
 for (const path of required) assert.ok(paths.has(path), `packed artifact is missing ${path}`)

@@ -12,6 +12,8 @@ The canonical directory form is:
 
 `skill-name` must be lowercase kebab-case and match `^[a-z0-9]+(?:-[a-z0-9]+)*$`. The directory name and frontmatter `name` must match.
 
+Prefer complete intent-bearing words. Do not use an abbreviation such as `cs`, `ops`, or a project codename unless the visible conversation defines it and the routing description expands it. Common technical terms such as `api`, `csv`, `pdf`, `dsh`, `ui`, and `ai` are acceptable.
+
 Project scope defaults to `.dsh/skills/`. DSH also recognizes project `.agents/skills/`, user `~/.dsh/skills/`, and user `~/.agents/skills/`, but this creator uses `.dsh/skills/` unless the user deliberately selects another scope.
 
 ## Frontmatter
@@ -37,6 +39,8 @@ Use booleans for invocation flags. Keep the description concise and include trig
 ## Resources
 
 Relative Markdown links in `SKILL.md` resolve against the Skill directory. Keep links inside that directory. Do not depend on the creator plugin's own files after generation, except while running its validator during creation.
+
+Reference every packaged resource from `SKILL.md` or from one clearly reachable routing reference. Resolve script and asset paths from the loaded Skill's resource base rather than assuming the Session workspace is the Skill directory.
 
 ## Compatibility baseline
 

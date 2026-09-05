@@ -12,9 +12,13 @@
 | SC-008 | Results distinguish verified and skipped checks | Instruction contract test |
 | SC-009 | Privacy and permission boundaries are retained | Instruction and validator tests |
 | SC-010 | Public DSH package is complete and clean | `npm pack --dry-run` acceptance script |
+| SC-011 | User corrections become traceable acceptance contracts and resources have no unexplained names/orphans | Instruction and validator tests |
+| SC-012 | Potentially sensitive script inputs cannot leak canaries through stdout, stderr, or output files | Isolated subprocess and filesystem canary tests |
+| SC-013 | Semantic reuse uses at most one fresh DSH Session and tests natural routing without naming the Skill | Instruction contract plus recorded live acceptance when credentials are available |
+| SC-014 | Small bundles have explicit proposal/generation budgets and avoid orchestration overhead | Instruction contract test |
 
 ## Semantic acceptance without paid multi-Agent runs
 
-V1 avoids making cross-Agent quality claims. Its executable acceptance boundary is DSH itself: provider lifecycle, canonical parsing, resource resolution, validator behavior, and package contents use deterministic tests. Instruction-contract tests verify required ordering and safety invariants without spending model tokens. Human review remains the acceptance mechanism for the semantic usefulness of a newly extracted Skill.
+The release avoids making cross-Agent quality claims. Its CI boundary is DSH itself: provider lifecycle, canonical parsing, resource resolution, validator behavior, privacy-canary containment, and package contents use deterministic tests. Instruction-contract tests verify required ordering, acceptance contracts, safety gates, replay shape, and cost budgets without spending model tokens.
 
-This split makes the deliverable reproducible while being honest about what static checks cannot prove.
+One optional live acceptance uses the same DSH installation and account for a creator Session plus at most one fresh replay Session. The replay uses a second sanitized fixture and a natural prompt that does not name the Skill. When credentials or Session creation are unavailable, the completion report must provide the exact replay packet and mark SC-013 unverified. This split keeps CI deterministic while remaining honest about what static checks cannot prove.

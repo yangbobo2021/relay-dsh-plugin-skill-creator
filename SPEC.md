@@ -61,6 +61,22 @@ The creator removes secrets, personal/customer identifiers, one-run state, absol
 
 The public package contains runtime code, the complete Skill resources, Cordis patch, license, and product documentation. It excludes tests, source files, repository metadata, environment files, and Codex plugin metadata.
 
+### SC-011 — Acceptance contract and naming
+
+Before mutation, the creator converts corrections, safety boundaries, output-shape rules, and completion conditions into requirement IDs with visible evidence, a falsifying test, and an exact oracle. Proposed resources trace to these IDs. Generated names use complete intent-bearing words unless an abbreviation is defined and expanded. Orphan resources are reported.
+
+### SC-012 — Runtime privacy canary
+
+Generated scripts that handle potentially sensitive data run first through a packaged canary wrapper. The wrapper captures child stdout/stderr and scans declared output paths without replaying child output. Any synthetic email, phone, or account canary in those surfaces is a hard failure even when static validation passes.
+
+### SC-013 — Fresh-session reuse
+
+When DSH Session creation is available, semantic acceptance uses one fresh Session on the same installation/account, a second sanitized fixture, and a natural prompt that does not name the generated Skill. It verifies routing, execution, contract oracles, and unexpected writes. Unavailable replay is reported as unverified with an exact replay packet.
+
+### SC-014 — Efficiency budget
+
+For bundles of eight files or fewer, the creator targets a proposal below 1,500 output tokens and generation/repair/validation below 8,000 output tokens. It avoids a task tracker, repeat reference reads, transcript recaps, and repeated repair loops. Budget overruns are reported and never justify skipping safety checks.
+
 ## 4. Default install behavior
 
 Generated Skills default to project scope at `<project>/.dsh/skills/<skill-name>/`. User scope at `~/.dsh/skills/<skill-name>/` requires an explicit choice or confirmation when no project applies.
@@ -71,7 +87,7 @@ Generated Skills default to project scope at `<project>/.dsh/skills/<skill-name>
 - Automatic inference from an unfinished brainstorming conversation.
 - Publishing generated Skills to GitHub or npm.
 - A universal cross-Agent Skill manifest.
-- Running paid multi-Agent compatibility tests.
+- Running paid multi-Agent or cross-account compatibility tests.
 - Evaluating the semantic quality of every future generated Skill without user review.
 
 ## 6. Acceptance

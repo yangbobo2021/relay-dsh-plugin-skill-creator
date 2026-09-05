@@ -18,12 +18,18 @@ const SECRET_PATTERNS = [
 ]
 const HOME_PATH = /(?:^|[\s`"'(])(?:\/Users\/[^/\s]+|\/home\/[^/\s]+|[A-Za-z]:\\Users\\[^\\\s]+)/u
 const PLACEHOLDER = /^\s*(?:(?:[-*]|#{1,6})\s*)?(?:TODO|TBD|FIXME)\b|\{\{[^}\n]+\}\}/mu
+const EMAIL = /\b[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,})\b/giu
+const PHONE_CN = /(?<!\d)1[3-9]\d{9}(?!\d)/gu
+const SAFE_PHONE_CANARIES = new Set(['13900001234'])
+const KNOWN_SHORT_NAME_SEGMENTS = new Set(['ai', 'api', 'ar', 'by', 'ci', 'csv', 'db', 'dsh', 'go', 'hr', 'id', 'in', 'io', 'ip', 'js', 'mcp', 'ml', 'npm', 'of', 'on', 'os', 'pdf', 'py', 'qa', 'sql', 'ssh', 'to', 'ts', 'ui', 'ux', 'vr'])
+const AMBIGUOUS_NAME_SEGMENTS = new Set(['cs', 'misc', 'ops', 'svc', 'tmp'])
 
 export async function validateSkill(skillDirectory) {
   const root = resolve(skillDirectory)
   const errors = []
   const warnings = []
   const files = []
+  const textSources = new Map()
 
   let rootStat
   try {
@@ -57,7 +63,7 @@ export async function validateSkill(skillDirectory) {
   } else {
     try {
       metadata = YAML.parse(match[1])
-      validateMetadata(metadata, basename(root), errors)
+      validateMetadata(metadata, basename(root), errors, warnings)
       if (skillSource.slice(match[0].length).trim() === '') {
         errors.push(issue('empty-body', 'SKILL.md', 'SKILL.md instruction body must not be empty'))
       }
@@ -74,14 +80,18 @@ export async function validateSkill(skillDirectory) {
     }
     if (!TEXT_EXTENSIONS.has(extname(file).toLowerCase())) continue
     const source = await readFile(absolute, 'utf8')
+    textSources.set(file, source)
     if (source.trim() === '') errors.push(issue('empty-file', file, 'Resource file must not be empty'))
     for (const detector of SECRET_PATTERNS) {
       if (detector.pattern.test(source)) errors.push(issue(detector.code, file, 'Possible credential or private key detected'))
     }
     if (HOME_PATH.test(source)) errors.push(issue('machine-path', file, 'Machine-specific home path detected; use a portable placeholder'))
+    validatePersonalData(file, source, errors)
     if (PLACEHOLDER.test(source)) warnings.push(issue('unfinished-placeholder', file, 'Unresolved TODO or template placeholder detected'))
     if (extname(file).toLowerCase() === '.md') validateLinks(root, file, source, fileSet, errors)
   }
+
+  validateResourceReachability(files, textSources, warnings)
 
   for (const directory of ['references', 'scripts', 'assets']) {
     if (files.some(file => file.startsWith(`${directory}/`))) continue
@@ -116,7 +126,7 @@ async function walk(root, directory, files, errors) {
   }
 }
 
-function validateMetadata(metadata, directoryName, errors) {
+function validateMetadata(metadata, directoryName, errors, warnings) {
   if (!isRecord(metadata)) {
     errors.push(issue('frontmatter-type', 'SKILL.md', 'Frontmatter must be a YAML mapping'))
     return
@@ -125,6 +135,12 @@ function validateMetadata(metadata, directoryName, errors) {
     errors.push(issue('invalid-name', 'SKILL.md', 'name must be lowercase kebab-case'))
   } else if (metadata.name !== directoryName) {
     errors.push(issue('name-directory-mismatch', 'SKILL.md', `name '${metadata.name}' must match directory '${directoryName}'`))
+  } else {
+    for (const segment of metadata.name.split('-')) {
+      if ((segment.length <= 2 && !KNOWN_SHORT_NAME_SEGMENTS.has(segment)) || AMBIGUOUS_NAME_SEGMENTS.has(segment)) {
+        warnings.push(issue('ambiguous-name-segment', 'SKILL.md', `name segment '${segment}' may be an unexplained abbreviation; prefer an intent-bearing word`))
+      }
+    }
   }
   if (typeof metadata.description !== 'string' || metadata.description.trim() === '') {
     errors.push(issue('invalid-description', 'SKILL.md', 'description must be a non-empty string'))
@@ -136,6 +152,29 @@ function validateMetadata(metadata, directoryName, errors) {
     if (metadata[key] !== undefined && typeof metadata[key] !== 'boolean') errors.push(issue('invalid-metadata', 'SKILL.md', `${key} must be a boolean`))
   }
   if (metadata.metadata !== undefined && !isRecord(metadata.metadata)) errors.push(issue('invalid-metadata', 'SKILL.md', 'metadata must be a mapping'))
+}
+
+function validatePersonalData(file, source, errors) {
+  for (const match of source.matchAll(EMAIL)) {
+    if (match[1]?.toLowerCase() === 'example.invalid') continue
+    errors.push(issue('personal-email', file, 'Possible personal email detected; use an @example.invalid placeholder'))
+  }
+  for (const match of source.matchAll(PHONE_CN)) {
+    if (SAFE_PHONE_CANARIES.has(match[0])) continue
+    errors.push(issue('personal-phone', file, 'Possible personal phone number detected; use an explicit synthetic canary or placeholder'))
+  }
+}
+
+function validateResourceReachability(files, textSources, warnings) {
+  const resources = files.filter(file => /^(?:references|scripts|assets)\//u.test(file))
+  for (const resource of resources) {
+    const referenced = [...textSources].some(([sourceFile, source]) => {
+      if (sourceFile === resource) return false
+      const local = relative(dirname(sourceFile), resource).split(sep).join('/')
+      return source.includes(resource) || source.includes(local)
+    })
+    if (!referenced) warnings.push(issue('orphan-resource', resource, 'Resource is not referenced by any other textual file'))
+  }
 }
 
 function validateLinks(root, sourceFile, source, fileSet, errors) {

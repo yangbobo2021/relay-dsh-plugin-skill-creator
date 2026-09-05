@@ -79,6 +79,47 @@ test('SC-007/009: rejects secrets, private machine paths, sensitive names, and s
   assert.ok(result.errors.some(error => error.code === 'symlink'))
 })
 
+test('SC-007/009/012: rejects PII-like literals but permits explicit invalid-domain canaries', async t => {
+  const root = await fixture(t)
+  await writeFile(join(root, 'SKILL.md'), `---
+name: example-skill
+description: Privacy fixture.
+---
+Use privacy-canary@example.invalid and 13900001234 only as synthetic canaries.
+Do not retain alice@customer.example or 13812345678.
+`)
+  const result = await validateSkill(root)
+  assert.equal(result.valid, false)
+  assert.ok(result.errors.some(error => error.code === 'personal-email'))
+  assert.ok(result.errors.some(error => error.code === 'personal-phone'))
+  assert.equal(result.errors.filter(error => error.code === 'personal-email').length, 1)
+  assert.equal(result.errors.filter(error => error.code === 'personal-phone').length, 1)
+})
+
+test('SC-007/011: warns about unexplained short name segments and orphan resources', async t => {
+  const root = await fixture(t, 'cs-report')
+  await mkdir(join(root, 'assets'))
+  await writeFile(join(root, 'SKILL.md'), '---\nname: cs-report\ndescription: Report fixture.\n---\n# Report\n')
+  await writeFile(join(root, 'assets', 'unused.txt'), 'Not reachable from instructions.\n')
+  const result = await validateSkill(root)
+  assert.equal(result.valid, true)
+  assert.ok(result.warnings.some(warning => warning.code === 'ambiguous-name-segment'))
+  assert.ok(result.warnings.some(warning => warning.code === 'orphan-resource'))
+})
+
+test('SC-011: warns about common ambiguous codenames while allowing established technical terms', async t => {
+  const ambiguous = await fixture(t, 'ops-report')
+  await writeFile(join(ambiguous, 'SKILL.md'), '---\nname: ops-report\ndescription: Operations report fixture.\n---\n# Report\n')
+  const ambiguousResult = await validateSkill(ambiguous)
+  assert.ok(ambiguousResult.warnings.some(warning => warning.code === 'ambiguous-name-segment'))
+
+  const technical = await fixture(t, 'csv-to-pdf')
+  await writeFile(join(technical, 'SKILL.md'), '---\nname: csv-to-pdf\ndescription: Convert CSV data to a PDF report.\n---\n# Report\n')
+  const technicalResult = await validateSkill(technical)
+  assert.equal(technicalResult.valid, true)
+  assert.equal(technicalResult.warnings.some(warning => warning.code === 'ambiguous-name-segment'), false)
+})
+
 test('SC-007: warns about unfinished placeholders and empty optional directories', async t => {
   const root = await fixture(t)
   await mkdir(join(root, 'assets'))

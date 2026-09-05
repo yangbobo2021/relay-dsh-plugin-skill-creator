@@ -18,7 +18,9 @@ The included `cordis.patch.yml` inserts `relay-dsh-plugin-skill-creator` into th
 
 ## Use
 
-At the end of a useful multi-turn DSH conversation, ask DSH to turn the conversation into a Skill or invoke `conversation-to-skill`. The Skill first proposes the target path and full file tree. It writes only after explicit confirmation, validates the generated bundle, and then verifies DSH discovery.
+At the end of a useful multi-turn DSH conversation, ask DSH to turn the conversation into a Skill or invoke `conversation-to-skill`. The Skill first converts user corrections into numbered requirement/evidence/test/oracle contracts, then proposes the target path, complete file tree, requirement coverage, exclusions, and validation plan. It writes only after explicit confirmation.
+
+Completion includes structural validation, a captured runtime PII-canary gate, generated-script checks, and DSH discovery. When Session creation is available, one fresh Session on the same DSH account tests natural routing and reuse; no cross-Agent accounts are required. Small bundles also carry proposal and generation token budgets whose overruns are reported honestly.
 
 V1 uses the conversation and artifacts visible in the current DSH context. It does not claim access to expired or hidden history.
 

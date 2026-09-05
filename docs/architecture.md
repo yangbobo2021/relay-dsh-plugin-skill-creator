@@ -8,8 +8,9 @@ DSH / Cordis
        └─ SkillProvider: relay-skill-creator
             └─ conversation-to-skill/
                  ├─ SKILL.md                 routing + mandatory workflow
-                 ├─ references/              conditional knowledge
-                 ├─ scripts/validate-skill   deterministic structural/privacy checks
+                 ├─ references/              extraction, acceptance, safety, and format rules
+                 ├─ scripts/validate-skill   deterministic structural/static privacy checks
+                 ├─ scripts/check-privacy    captured runtime canary gate
                  └─ assets/skill-skeleton/   authoring seed
 ```
 
@@ -29,6 +30,7 @@ The main instructions load only the references required for the current phase. D
 - The plugin owns one trusted bundled Skill provider.
 - The Skill reasons only over context and files available through DSH.
 - The validator inspects a requested local Skill directory and performs no network access or writes.
+- The canary wrapper executes only the explicit generated command without a shell, suppresses its raw output, and scans only declared paths.
 - The user owns approval before generated files are created or updated.
 
 ## Future extension points
